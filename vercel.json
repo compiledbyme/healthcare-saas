@@ -7,5 +7,13 @@
       "config": { "distDir": "build" }
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/service-worker.js", "destination": "/service-worker.js" },
+    { "source": "/asset-manifest.json", "destination": "/asset-manifest.json" },
+    { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/logo192.png", "destination": "/logo192.png" },
+    { "source": "/logo512.png", "destination": "/logo512.png" },
+    { "source": "/static/(.*)", "destination": "/static/$1" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
