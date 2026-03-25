@@ -5,7 +5,16 @@ import { useDispatch } from "react-redux";
 export const useNotifications = () => {
   const [permission, setPermission] =
     useState<NotificationPermission>("default");
+  const [swReady, setSwReady] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready
+        .then(() => setSwReady(true))
+        .catch(() => setSwReady(false));
+    }
+  }, []);
 
   const requestPermission = async (): Promise<boolean> => {
     if (!("Notification" in window)) {
@@ -16,6 +25,16 @@ export const useNotifications = () => {
         }),
       );
       return false;
+    }
+
+    // Ensure SW is ready before prompting to avoid first-load misses
+    if ("serviceWorker" in navigator && !swReady) {
+      try {
+        await navigator.serviceWorker.ready;
+        setSwReady(true);
+      } catch {
+        /* ignore */
+      }
     }
 
     if (permission === "granted") return true;
@@ -67,5 +86,5 @@ export const useNotifications = () => {
     }
   }, []);
 
-  return { requestPermission, sendNotification, permission };
+  return { requestPermission, sendNotification, permission, swReady };
 };
