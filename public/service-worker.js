@@ -1,6 +1,12 @@
 /* eslint-disable no-restricted-globals */
 const CACHE_NAME = "pulsecare-cache-v1";
-const OFFLINE_URLS = ["/", "/index.html", "/manifest.json", "/logo192.png", "/logo512.png"];
+const OFFLINE_URLS = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/logo192.png",
+  "/logo512.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -11,9 +17,15 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
-    ),
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME)
+            .map((key) => caches.delete(key)),
+        ),
+      ),
   );
   self.clients.claim();
 });
@@ -28,7 +40,9 @@ self.addEventListener("fetch", (event) => {
         fetch(event.request)
           .then((response) => {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, clone));
             return response;
           })
           .catch(() => caches.match("/index.html")),
@@ -38,7 +52,11 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("push", (event) => {
   const data = (() => {
-    if (!event.data) return { title: "PulseCare update", body: "You have a new notification." };
+    if (!event.data)
+      return {
+        title: "PulseCare update",
+        body: "You have a new notification.",
+      };
     try {
       return event.data.json();
     } catch (err) {
