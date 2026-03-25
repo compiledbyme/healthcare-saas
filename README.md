@@ -1,46 +1,71 @@
-# Getting Started with Create React App
+# Healthcare SaaS Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Modern B2B healthcare console built with React, TypeScript, Redux Toolkit, Firebase Auth, MUI 5, Recharts, and a custom service worker for offline cache + notifications.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Email/password login via Firebase Authentication (protected routes, auth state persisted on refresh).
+- Dashboard with KPIs, charts, and a “Send daily digest” notification trigger.
+- Patient Management with grid/list toggle, shared data source (`src/data/patients.ts`), detail view with status updates and reminder notifications.
+- Analytics page with cohort/condition charts.
+- Service worker for offline cache and push/local notifications.
+- Dark theme with MUI, responsive drawer layout, toast notifications.
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node.js 18+ and npm.
+- Firebase project with Email/Password sign-in enabled.
+- Chrome (recommended) for testing notifications.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Setup
 
-### `npm test`
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Environment variables: create a `.env` in repo root:
+   ```bash
+   REACT_APP_FIREBASE_API_KEY=your_api_key
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+   REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   REACT_APP_FIREBASE_APP_ID=your_app_id
+   REACT_APP_ENABLE_SW=true
+   ```
+3. Start dev server:
+   ```bash
+   npm start
+   ```
+4. Build for production:
+   ```bash
+   npm run build
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Testing notifications locally
 
-### `npm run build`
+- Keep `REACT_APP_ENABLE_SW=true`.
+- In the app header, click “Enable Alerts” to grant permission.
+- On Dashboard, click “Send daily digest” to trigger a service-worker notification; a toast also appears.
+- From Patient Details, use “Send Reminder” for a targeted notification.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deployment (Vercel)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `vercel.json` uses `@vercel/static-build` with `distDir: build`.
+- Set the same env vars in Vercel Project Settings → Environment Variables.
+- Default build command: `npm run build`; output: `build/`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Project structure (selected)
 
-### `npm run eject`
+- `src/App.tsx` – routing, theme, providers.
+- `src/components` – layout shell, patient list/grid, protected route.
+- `src/pages` – Login, Dashboard, Patients, PatientDetails, Analytics.
+- `src/store` – Redux store + slices (`auth`, `patients`, `ui`) and typed hooks.
+- `src/hooks/useNotifications.ts` – permission + SW-backed notifications.
+- `src/data/patients.ts` – seed patient data.
+- `public/service-worker.js` – cache + push/local notification handling.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Notes
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Demo credentials must exist in your Firebase Auth (e.g., create `chetan@gmail.com / Test@1234` there).
+- `robots.txt` is removed; add it back if you need crawl rules.
